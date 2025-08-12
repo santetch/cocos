@@ -17,10 +17,6 @@ Backend service built with **NestJS**, **TypeScript**, and **TypeORM**. Uses **Y
   * [Tests](#tests)
 * [Docker](#docker)
 * [Swagger / OpenAPI](#swagger--openapi)
-* [Project Structure (suggested)](#project-structure-suggested)
-* [Troubleshooting](#troubleshooting)
-* [License](#license)
-* [Contact](#contact)
 
 ---
 
