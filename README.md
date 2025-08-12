@@ -49,10 +49,10 @@ yarn install
 yarn build:swagger
 
 # 3) Create Local DB
-cd infrasctructure && docker compose up
+docker compose up
 
 # 4) Load Migrations
-cd.. && yarn migration:run
+yarn migration:run
 
 # 5) Start in dev mode (watch)
 yarn start:dev
