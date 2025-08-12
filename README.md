@@ -1,98 +1,171 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# cocos-backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend service built with **NestJS**, **TypeScript**, and **TypeORM**. Uses **Yarn 4 (Berry)** for package management, **Jest** for testing, and optional **Docker** for containerized runs.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Table of Contents
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+* [Prerequisites](#prerequisites)
+* [Getting Started](#getting-started)
+* [Environment](#environment)
+* [Scripts](#scripts)
 
-## Project setup
+  * [Starts](#starts)
+  * [Builds](#builds)
+  * [Migrations](#migrations)
+  * [Tests](#tests)
+* [Docker](#docker)
+* [Swagger / OpenAPI](#swagger--openapi)
+* [Project Structure (suggested)](#project-structure-suggested)
+* [Troubleshooting](#troubleshooting)
+* [License](#license)
+* [Contact](#contact)
 
-```bash
-$ yarn install
-```
+---
 
-## Compile and run the project
+## Prerequisites
+
+* **Node.js**: 20+ recommended
+* **Yarn**: This repo uses Yarn **4.5.3** (Berry). Activate via Corepack.
+* **PostgreSQL** (for local DB + migrations)
+* **Docker** (optional)
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+# Enable Corepack and activate the repo's Yarn version
+corepack enable
+corepack prepare yarn@4.5.3 --activate
 ```
 
-## Run tests
+---
+
+## Getting Started
 
 ```bash
-# unit tests
-$ yarn run test
+# 1) Install dependencies
+yarn install
 
-# e2e tests
-$ yarn run test:e2e
+# 2) (Optional) Generate Swagger artifacts
+yarn build:swagger
 
-# test coverage
-$ yarn run test:cov
+# 3) Create Local DB
+cd infrasctructure && docker compose up
+
+# 4) Load Migrations
+cd.. && yarn migration:run
+
+# 5) Start in dev mode (watch)
+yarn start:dev
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Environment
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+This project uses a TypeORM data source at:
+
+```
+./src/config/postgres.ds.migration.provider.ts
+```
+
+Ensure your environment variables match what that file expects. A typical local setup might include:
+
+```env
+# .env 
+NODE_ENV=local
+PORT=3021
+
+# Database 
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=cocosServicesRoot
+DB_PASS=root
+DB_NAME=cocos_services
+
+# TypeORM misc 
+DB_SSL=false
+DB_SYNC=false
+```
+
+---
+
+## Scripts
+
+### Starts
+
+* **`yarn start`** – `nest start -w` (watch)
+* **`yarn start:dev`** – `nest start --watch`
+* **`yarn start:debug`** – `nest start --debug --watch`
+* **`yarn start:prod`** – runs the compiled app: `node dist/main`
+* **`yarn start:docker`** – `docker run -it --rm cocos-backend-repository`
+* **`yarn start:docker:w`** – open a shell in the image: `docker run -it --rm cocos-backend-repository /bin/sh`
+
+### Builds
+
+* **`yarn build`** – compile TypeScript via Nest build
+* **`yarn build:swagger`** – generate OpenAPI metadata via `ts-node ./src/common/swagger/generate-metadata.ts`
+* **`yarn build:docker`** – build Docker image (`cocos-backend-repository`) with `STAGE=LOCAL`
+
+### Migrations
+
+> Migrations use the TypeORM CLI via `typeorm-ts-node-commonjs` and the data source at `./src/config/postgres.ds.migration.provider.ts`.
+
+* **Generate**
 
 ```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+# Pass a descriptive name for the migration file
+yarn migration:gen AddUsersTable
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+  This runs a build and then:
 
-## Resources
+```bash
+yarn typeorm migration:generate ./src/common/migration/AddUsersTable -d ./src/config/postgres.ds.migration.provider.ts
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+* **Run**
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+yarn migration:run
+```
 
-## Support
+- **Revert (one step)**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+yarn migration:revert
+````
 
-## Stay in touch
+### Tests
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+* **`yarn test`** – unit tests
+* **`yarn test:watch`** – watch mode
+* **`yarn test:cov`** – coverage
+* **`yarn test:debug`** – debug tests with Node inspector
+* **`yarn test:e2e`** – end-to-end tests (`./test/jest-e2e.json`)
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Docker
+
+```bash
+# Build the image
+yarn build:docker
+
+# Run the image (default CMD)
+yarn start:docker
+
+# Inspect the image interactively
+yarn start:docker:w
+```
+
+---
+
+## Swagger / OpenAPI
+
+The command below generates OpenAPI artifacts as defined in `./src/common/swagger/generate-metadata.ts`:
+
+```bash
+yarn build:swagger
+```
+
+

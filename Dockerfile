@@ -1,59 +1,41 @@
 # === Stage 1: Build Library ("builder") ===
-FROM public.ecr.aws/s2k0c6k5/spp/sync-service-base:latest AS builder
+FROM node:23-alpine AS builder
 WORKDIR /usr/src/app
 
 # Copy workspace configuration and dependency files.
-COPY package.json yarn.lock nx.json tsconfig.json .yarnrc.yml ./
+COPY package.json yarn.lock tsconfig.json .yarnrc.yml ./
 
 # Enable Corepack and prepare Yarn (v4.5.3).
 RUN corepack enable 
 RUN corepack prepare yarn@4.5.3 --activate
 
-# Copy the neccessary libs
-COPY libs/drivers/linux ./libs/drivers
-COPY libs/communication-contracts ./libs/communication-contracts
-
-# Install Nx CLI and project dependencies.
-RUN yarn add nx && yarn install
-
-# Build the 'communication-contracts' library.
-RUN yarn nx run @esquire-makingsense/communication-contracts:build
+# Install project dependencies.
+RUN  yarn install
 
 # === Stage 2: Build Target Service ("build-services") ===
-FROM public.ecr.aws/s2k0c6k5/spp/sync-service-base:latest AS build-services
+FROM node:23-alpine AS build-services
 WORKDIR /usr/src/app
 
 # Copy workspace configuration files.
-COPY package.json yarn.lock nx.json tsconfig.json .yarnrc.yml ./
+COPY package.json yarn.lock tsconfig.json .yarnrc.yml ./
 
 # Enable Corepack and set up Yarn.
 RUN corepack enable
 RUN corepack prepare yarn@4.5.3 --activate
 
-# Copy the necessary libs
-COPY --from=builder /usr/src/app/libs/drivers/NQjc.jar ./libs/drivers/
-COPY --from=builder /usr/src/app/libs/communication-contracts/src ./libs/communication-contracts/src
-COPY --from=builder /usr/src/app/libs/communication-contracts/package.json ./libs/communication-contracts/
-
-# Copy the microservice source code.
-COPY /services/microservices/sync-service ./services/microservices/sync-service
-
-# Install Java JDK and JRE
-RUN apt-get update && apt-get install default-jre -y && apt-get install default-jdk -y
+# Copy the service source code.
+COPY / ./
 
 # Install dependencies for the service.
 RUN yarn install
 
-# Build the 'sync-service' microservice.
-RUN yarn nx run sync-service:build
+# Build the 'cocos-backend' service.
+RUN yarn build
 
 # === Stage 3: Runtime ("runner") ===
-FROM public.ecr.aws/s2k0c6k5/spp/sync-service-base:latest AS runner
+#FROM node:22-alpine AS runner
+FROM node:23-alpine AS runner
 WORKDIR /usr/src/app
-
-# Export Java Path
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV LD_LIBRARY_PATH=$JAVA_HOME/lib/server
 
 # Optionally, pass build stage info (if needed by your application).
 ARG STAGE
@@ -66,8 +48,11 @@ RUN corepack prepare yarn@4.5.3 --activate
 COPY --from=build-services /usr/src/app/ .
 
 # Expose the service port.
-EXPOSE 3022
-ENV PORT 3022
+EXPOSE 3021
+ENV PORT 3021
 
-# Start the 'sync-service' microservice.
-CMD ["yarn", "nx", "start", "sync-service"]
+# Run migrations before starting the service.
+# Start the 'cocos-backend' service.
+# If the migration step fails, the container will exit without starting the service.
+CMD ["sh", "-c", "yarn migration:run && yarn start"]
+
