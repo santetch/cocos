@@ -1,9 +1,6 @@
-import {
-  Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index, CreateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index, CreateDateColumn } from 'typeorm';
 import { Instrument } from '../../instruments/entity/instrument.entity';
 import { User } from '../../persistance/entities/user.entity';
-
 
 export type OrderSide = 'BUY' | 'SELL' | 'CASH_IN' | 'CASH_OUT';
 export type OrderType = 'MARKET' | 'LIMIT';
@@ -13,13 +10,13 @@ export type OrderStatus = 'NEW' | 'FILLED' | 'REJECTED' | 'CANCELLED';
 @Index(['userId', 'instrumentId', 'status'])
 @Index(['datetime'])
 export class Order {
-  @PrimaryGeneratedColumn() 
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column() 
+  @Column()
   instrumentId: number;
 
-  @Column() 
+  @Column()
   userId: number;
 
   @ManyToOne(() => Instrument, i => i.orders, { onDelete: 'RESTRICT' })

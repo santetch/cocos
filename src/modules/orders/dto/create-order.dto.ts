@@ -3,7 +3,6 @@ import { IsIn, IsInt, IsOptional, IsPositive, ValidateIf } from 'class-validator
 import { Type } from 'class-transformer';
 import { OrderSide, OrderType } from '../entity/order.entity';
 
-
 export class CreateOrderDTO {
   @ApiProperty({ example: 1 })
   @Type(() => Number)
@@ -15,12 +14,12 @@ export class CreateOrderDTO {
   @IsInt()
   instrumentId!: number;
 
-  @ApiProperty({ enum: ['BUY','SELL','CASH_IN','CASH_OUT'] })
-  @IsIn(['BUY','SELL','CASH_IN','CASH_OUT'])
+  @ApiProperty({ enum: ['BUY', 'SELL', 'CASH_IN', 'CASH_OUT'] })
+  @IsIn(['BUY', 'SELL', 'CASH_IN', 'CASH_OUT'])
   side!: OrderSide;
 
-  @ApiProperty({ enum: ['MARKET','LIMIT'] })
-  @IsIn(['MARKET','LIMIT'])
+  @ApiProperty({ enum: ['MARKET', 'LIMIT'] })
+  @IsIn(['MARKET', 'LIMIT'])
   type!: OrderType;
 
   @ApiPropertyOptional({ example: 100, description: 'Shares for equity ops. Mutually exclusive with amount.' })
@@ -31,7 +30,10 @@ export class CreateOrderDTO {
   @IsOptional()
   size?: number;
 
-  @ApiPropertyOptional({ example: 50000, description: 'ARS amount; for BUY MARKET/LIMIT computes floor(amount/price).' })
+  @ApiPropertyOptional({
+    example: 50000,
+    description: 'ARS amount; for BUY MARKET/LIMIT computes floor(amount/price).'
+  })
   @Type(() => Number)
   @IsInt()
   @IsPositive()

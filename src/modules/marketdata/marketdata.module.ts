@@ -8,6 +8,6 @@ import { MarketData } from './entity/marketdata.entity';
   imports: [TypeOrmModule.forFeature([MarketData])],
   providers: [MarketDataService],
   controllers: [MarketDataController],
-  exports: [MarketDataService],
+  exports: [MarketDataService]
 })
 export class MarketDataModule {}

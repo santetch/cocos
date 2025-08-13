@@ -6,7 +6,6 @@ import { config } from './config/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import metadata from './metadata';
 
-
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
@@ -39,6 +38,6 @@ const logInfo = (): void => {
   logger.log(`==> Listening on port ${config.port}`);
 
   logger.log(`==> Swagger DOC http://localhost:${config.port}/api`);
-}
+};
 
 bootstrap();

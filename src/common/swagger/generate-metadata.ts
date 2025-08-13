@@ -14,10 +14,10 @@ generator.generate({
     new ReadonlyVisitor({
       introspectComments: true,
       pathToSource: serviceSrcPath,
-      dtoFileNameSuffix: '.dto',
-    }),
+      dtoFileNameSuffix: '.dto'
+    })
   ],
   outputDir: serviceSrcPath,
   watch: false,
-  tsconfigPath: './tsconfig.build.json',
+  tsconfigPath: './tsconfig.build.json'
 });

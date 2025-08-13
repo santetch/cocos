@@ -1,4 +1,3 @@
-// portfolio/portfolio.service.ts
 import { Injectable } from '@nestjs/common';
 import Decimal from 'decimal.js';
 import { InstrumentsService } from '../../instruments/service/instrument.service';
@@ -9,14 +8,14 @@ export class PortfolioService {
   constructor(
     private readonly repository: PortfolioRepository,
     private readonly instrumentsService: InstrumentsService
-  ) { }
+  ) {}
 
   async getPortfolio(userId: number) {
     // 1) Cash (ARS)
     const { cash } = await this.repository.getCashFor(userId);
 
     // 2) Net shares per instrument (exclude MONEDA)
-    const shareRows: Array<{ instrumentId: number, shares: string }> = await this.repository.getNetSharesFor(userId);
+    const shareRows: Array<{ instrumentId: number; shares: string }> = await this.repository.getNetSharesFor(userId);
 
     const instrumentIds = shareRows.map(r => r.instrumentId);
 
@@ -36,7 +35,7 @@ export class PortfolioService {
       userId,
       cash: new Decimal(cash).toFixed(2),
       totalValue: total.toFixed(2),
-      positions,
+      positions
     };
   }
 
@@ -45,11 +44,16 @@ export class PortfolioService {
       userId,
       cash: new Decimal(cash).toFixed(2),
       totalValue: new Decimal(cash).toFixed(2),
-      positions: [],
+      positions: []
     };
   }
 
-  private buildPositions(shareRows: Array<{ instrumentId: number, shares: string }>, prices: Record<number, { close: string; previousClose: string }>, byId: Map<number, any>, cash: any) {
+  private buildPositions(
+    shareRows: Array<{ instrumentId: number; shares: string }>,
+    prices: Record<number, { close: string; previousClose: string }>,
+    byId: Map<number, any>,
+    cash: any
+  ) {
     let total = new Decimal(cash);
 
     const positions = shareRows.map(({ instrumentId, shares }) => {
@@ -71,10 +75,10 @@ export class PortfolioService {
         close: close.toFixed(4),
         previousClose: prev.toFixed(4),
         marketValue: marketValue.toFixed(2),
-        dailyReturnPct: dailyReturnPct.toFixed(6),
+        dailyReturnPct: dailyReturnPct.toFixed(6)
       };
     });
 
-    return { total, positions }
+    return { total, positions };
   }
 }

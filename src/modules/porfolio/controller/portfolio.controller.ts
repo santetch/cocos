@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpCode, Logger, Param, Post, Put } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, HttpCode, Logger, Param } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { PortfolioService } from '../service/portfolio.service';
 import { PortfolioDTO } from '../dto/portfolio.dto';
@@ -7,7 +7,7 @@ import { PortfolioDTO } from '../dto/portfolio.dto';
 @ApiTags('Portfolio')
 @Controller('/portfolio')
 export class PortfolioController {
-  constructor(private readonly service: PortfolioService) { }
+  constructor(private readonly service: PortfolioService) {}
 
   private readonly logger = new Logger(PortfolioController.name);
 
@@ -21,7 +21,7 @@ export class PortfolioController {
 
       this.logger.log('Portfolio retrieved:', portfolio);
 
-      return portfolio
+      return portfolio;
     } catch (error) {
       this.logger.error(`Error retrieving portfolio for user ${id}`, error);
 

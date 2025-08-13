@@ -13,7 +13,7 @@ export class OrdersService {
     private readonly dataSource: DataSource,
     @InjectRepository(Order) private readonly ordersRepo: Repository<Order>,
     @InjectRepository(MarketData) private readonly mdRepo: Repository<MarketData>,
-    @InjectRepository(Instrument) private readonly instrumentsRepo: Repository<Instrument>,
+    @InjectRepository(Instrument) private readonly instrumentsRepo: Repository<Instrument>
   ) {}
 
   async create(dto: CreateOrderDTO) {
@@ -34,11 +34,11 @@ export class OrdersService {
       throw new BadRequestException('LIMIT orders require price');
     }
 
-    return this.dataSource.transaction(async (manager) => {
+    return this.dataSource.transaction(async manager => {
       // Idempotency (optional): if a correlationId exists and was used, return the existing order
       if (dto.correlationId) {
         const existing = await manager.getRepository(Order).findOne({
-          where: { correlation_id: dto.correlationId },
+          where: { correlation_id: dto.correlationId }
         });
         if (existing) {
           return { id: existing.id, status: existing.status, reason: existing.reason ?? null };
@@ -52,12 +52,12 @@ export class OrdersService {
       } else if (dto.type === 'MARKET') {
         const last = await manager.getRepository(MarketData).findOne({
           where: { instrumentId: dto.instrumentId },
-          order: { datetime: 'DESC' },
+          order: { datetime: 'DESC' }
         });
         if (!last) throw new BadRequestException('No market data for instrument');
         execPrice = new Decimal(last.close);
       } else {
-        execPrice = new Decimal(dto.price!);
+        execPrice = new Decimal(dto.price);
       }
 
       // Derive size from amount if needed (BUY only; SELL with amount doesn’t make sense)
@@ -92,7 +92,7 @@ export class OrdersService {
         FROM orders
         WHERE "userId" = $1
         `,
-        [dto.userId],
+        [dto.userId]
       );
       const cash = new Decimal(cashRow?.[0]?.cash ?? 0);
 
@@ -109,12 +109,12 @@ export class OrdersService {
         FROM orders
         WHERE "userId" = $1 AND "instrumentId" = $2
         `,
-        [dto.userId, dto.instrumentId],
+        [dto.userId, dto.instrumentId]
       );
       const shares = new Decimal(sharesRow?.[0]?.shares ?? 0);
 
       // Domain validations
-      const sz = new Decimal(size!);
+      const sz = new Decimal(size);
       let status: OrderStatus = 'NEW';
       let reason: string | null = null;
 
@@ -156,7 +156,7 @@ export class OrdersService {
         type: dto.type,
         status,
         reason: reason ?? null,
-        correlation_id: dto.correlationId ?? null,
+        correlation_id: dto.correlationId ?? null
       });
       const saved = await manager.getRepository(Order).save(order);
 
@@ -165,7 +165,7 @@ export class OrdersService {
   }
 
   async cancel(id: number) {
-    return this.dataSource.transaction(async (manager) => {
+    return this.dataSource.transaction(async manager => {
       const repo = manager.getRepository(Order);
       const ord = await repo.findOne({ where: { id } });
       if (!ord) throw new NotFoundException('Order not found');

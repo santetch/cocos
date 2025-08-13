@@ -9,6 +9,6 @@ import { PortfolioRepository } from './repository/portfolio.repository';
 @Module({
   imports: [MarketDataModule, InstrumentsModule],
   controllers: [PortfolioController],
-  providers: [PortfolioService, PortfolioRepository],
+  providers: [PortfolioService, PortfolioRepository]
 })
 export class PorfolioModule {}

@@ -6,7 +6,7 @@ export type InstrumentType = 'ACCION' | 'BONO' | 'ETF' | 'CEDEAR' | 'MONEDA';
 
 @Entity('instruments')
 export class Instrument {
-  @PrimaryGeneratedColumn() 
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Index()
@@ -20,9 +20,9 @@ export class Instrument {
   @Column({ type: 'varchar', length: 10 })
   type: InstrumentType;
 
-  @OneToMany(() => Order, o => o.instrument) 
+  @OneToMany(() => Order, o => o.instrument)
   orders: Order[];
-  
-  @OneToMany(() => MarketData, md => md.instrument) 
+
+  @OneToMany(() => MarketData, md => md.instrument)
   marketData: MarketData[];
 }

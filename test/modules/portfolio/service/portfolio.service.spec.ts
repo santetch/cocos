@@ -1,17 +1,17 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { InstrumentsService } from "../../../../src/modules/instruments/service/instrument.service";
-import { PortfolioRepository } from "../../../../src/modules/porfolio/repository/portfolio.repository";
-import { PortfolioService } from "../../../../src/modules/porfolio/service/portfolio.service";
+import { Test, TestingModule } from '@nestjs/testing';
+import { InstrumentsService } from '../../../../src/modules/instruments/service/instrument.service';
+import { PortfolioRepository } from '../../../../src/modules/porfolio/repository/portfolio.repository';
+import { PortfolioService } from '../../../../src/modules/porfolio/service/portfolio.service';
 
 describe('Profolio Service', () => {
   let portfolioService: PortfolioService;
 
   let instrumentsService: InstrumentsService;
-  
+
   let repository: PortfolioRepository;
 
   const userId = 1;
-  
+
   beforeEach(async () => {
     const app: TestingModule = await createTestApp();
 
@@ -43,7 +43,7 @@ describe('Profolio Service', () => {
 
   it('should return empty positions if no shares', async () => {
     jest.spyOn(repository, 'getNetSharesFor').mockResolvedValue([]);
-    
+
     const portfolio = await portfolioService.getPortfolio(userId);
 
     expect(portfolio.positions).toEqual([]);
@@ -82,7 +82,7 @@ describe('Profolio Service', () => {
             getNetSharesFor: jest.fn().mockResolvedValue([
               { instrumentId: 1, shares: '10' },
               { instrumentId: 2, shares: '5' }
-            ]),
+            ])
           }
         },
         {
@@ -91,7 +91,7 @@ describe('Profolio Service', () => {
             getInstrumentById: jest.fn().mockResolvedValue({
               id: 1,
               name: 'Test Instrument',
-              symbol: 'TEST',
+              symbol: 'TEST'
             }),
             getLatestPricesFor: jest.fn().mockResolvedValue({
               1: { close: '100.00', previousClose: '95.00' },
@@ -100,10 +100,10 @@ describe('Profolio Service', () => {
             findByIds: jest.fn().mockResolvedValue([
               { id: 1, ticker: 'TEST1', name: 'Test Instrument 1', type: 'STOCK' },
               { id: 2, ticker: 'TEST2', name: 'Test Instrument 2', type: 'STOCK' }
-            ]),
+            ])
           }
         }
-      ],
+      ]
     }).compile();
-  }
+  };
 });

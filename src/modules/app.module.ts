@@ -8,7 +8,6 @@ import { PorfolioModule } from './porfolio/portfolio.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getRepositoryConfig } from '~src/config/postgres.db.config.provider';
 
-
 @Module({
   imports: [
     HealthModule,
@@ -16,10 +15,10 @@ import { getRepositoryConfig } from '~src/config/postgres.db.config.provider';
     InstrumentsModule,
     OrdersModule,
     MarketDataModule,
-    PorfolioModule,
+    PorfolioModule
   ],
   controllers: [],
-  providers: [],
+  providers: []
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer): void {

@@ -4,7 +4,6 @@ import { OrdersService } from '../service/orders.service';
 import { CreateOrderDTO } from '../dto/create-order.dto';
 import { OrderResponseDTO } from '../dto/order-response.dto';
 
-
 @ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {

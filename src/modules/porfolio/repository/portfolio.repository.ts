@@ -1,14 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { DataSource } from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class PortfolioRepository {
-  constructor(
-    private readonly dataSource: DataSource,
-  ) { }
+  constructor(private readonly dataSource: DataSource) {}
 
-  async getCashFor(userId: number): Promise<{ cash: any; }> {
-    return await this.dataSource.query(`
+  async getCashFor(userId: number): Promise<{ cash: any }> {
+    return await this.dataSource
+      .query(
+        `
       SELECT COALESCE(SUM(
         CASE
         WHEN side='CASH_IN'  AND status='FILLED' THEN size
@@ -20,11 +20,15 @@ export class PortfolioRepository {
         ),0)::numeric(18,4) AS cash
         FROM orders
         WHERE "userId" = $1
-        `, [userId]).then(r => r[0] ?? { cash: '0' });
+        `,
+        [userId]
+      )
+      .then(r => r[0] ?? { cash: '0' });
   }
 
-  async getNetSharesFor(userId: number): Promise<{ instrumentId: number; shares: string; }[]> {
-    return await this.dataSource.query(`
+  async getNetSharesFor(userId: number): Promise<{ instrumentId: number; shares: string }[]> {
+    return await this.dataSource.query(
+      `
       SELECT "instrumentId",
               COALESCE(SUM(
                 CASE
@@ -43,7 +47,8 @@ export class PortfolioRepository {
                   ELSE 0
                 END
               ),0) <> 0
-    `, [userId]);
+    `,
+      [userId]
+    );
   }
-
 }

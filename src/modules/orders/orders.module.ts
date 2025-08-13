@@ -7,11 +7,10 @@ import { Instrument } from '../instruments/entity/instrument.entity';
 import { Order } from './entity/order.entity';
 import { MarketData } from '../marketdata/entity/marketdata.entity';
 
-
 @Module({
   imports: [TypeOrmModule.forFeature([Order, Instrument, MarketData])],
   controllers: [OrdersController],
   providers: [OrdersService],
-  exports: [OrdersService],
+  exports: [OrdersService]
 })
 export class OrdersModule {}

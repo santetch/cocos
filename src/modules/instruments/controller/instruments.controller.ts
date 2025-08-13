@@ -4,7 +4,6 @@ import { SearchInstrumentsDTO } from '../dto/search-instrument.dto';
 import { InstrumentDTO } from '../dto/instrument.dto';
 import { InstrumentsService } from '../service/instrument.service';
 
-
 @ApiTags('Instruments')
 @Controller('instruments')
 export class InstrumentsController {
@@ -19,7 +18,7 @@ export class InstrumentsController {
       return await this.service.search(dto);
     } catch (error) {
       this.logger.error('Error searching instruments', error);
-      
+
       return [];
     }
   }

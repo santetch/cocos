@@ -5,10 +5,7 @@ import { InstrumentsRepository } from '../repositoy/instrument.repository';
 
 @Injectable()
 export class InstrumentsService {
-
-  constructor(
-    private readonly repository: InstrumentsRepository
-  ) { }
+  constructor(private readonly repository: InstrumentsRepository) {}
 
   async search({ query = '', page = 1, pageSize = 25 }: SearchInstrumentsDTO) {
     const rows = await this.repository.find(query, page, pageSize);
@@ -17,7 +14,7 @@ export class InstrumentsService {
       id: r.id,
       ticker: r.ticker,
       name: r.name,
-      type: r.type,
+      type: r.type
     }));
   }
 
@@ -43,7 +40,7 @@ export class InstrumentsService {
     return priceRows.map((r: any) => ({
       instrumentId: r.instrumentId,
       close: r.close,
-      previousClose: r.previousClose,
+      previousClose: r.previousClose
     }));
   }
 }
