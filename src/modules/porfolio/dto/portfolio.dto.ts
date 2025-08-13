@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsOptional } from 'class-validator';
 import { PositionDTO } from './position.dto';
 
 export class PortfolioDTO {

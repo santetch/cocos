@@ -6,11 +6,14 @@ import { OrdersService } from './service/orders.service';
 import { Instrument } from '../instruments/entity/instrument.entity';
 import { Order } from './entity/order.entity';
 import { MarketData } from '../marketdata/entity/marketdata.entity';
+import { OrdersRepository } from './repository/orders.repository';
+import { InstrumentsModule } from '../instruments/instruments.module';
+import { MarketDataModule } from '../marketdata/marketdata.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, Instrument, MarketData])],
+  imports: [TypeOrmModule.forFeature([Order, Instrument, MarketData]), InstrumentsModule, MarketDataModule],
   controllers: [OrdersController],
-  providers: [OrdersService],
+  providers: [OrdersService, OrdersRepository],
   exports: [OrdersService]
 })
 export class OrdersModule {}

@@ -3,11 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MarketDataService } from './service/marketdata.service';
 import { MarketDataController } from './controller/marketdata.controller';
 import { MarketData } from './entity/marketdata.entity';
+import { MarketDataRepository } from './repository/marketdata.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MarketData])],
-  providers: [MarketDataService],
+  providers: [MarketDataService, MarketDataRepository],
   controllers: [MarketDataController],
-  exports: [MarketDataService]
+  exports: [MarketDataService, MarketDataRepository]
 })
 export class MarketDataModule {}

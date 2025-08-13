@@ -1,7 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Instrument } from '../entity/instrument.entity';
 import { DataSource, ILike, In, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class InstrumentsRepository {
   constructor(
     private readonly dataSource: DataSource,
@@ -19,6 +21,10 @@ export class InstrumentsRepository {
     });
 
     return rows;
+  }
+
+  async findOneById(id: number): Promise<Instrument | null> {
+    return await this.repository.findOneBy({ id });
   }
 
   async findByIds(ids: any[]): Promise<Instrument[]> {

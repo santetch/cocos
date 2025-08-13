@@ -14,10 +14,10 @@ export class Order {
   id: number;
 
   @Column()
-  instrumentId: number;
+  userId: number;
 
   @Column()
-  userId: number;
+  instrumentId: number;
 
   @ManyToOne(() => Instrument, i => i.orders, { onDelete: 'RESTRICT' })
   instrument: Instrument;
@@ -46,8 +46,8 @@ export class Order {
 
   @Column({ type: 'text', nullable: true })
   reason?: string;
-  // for REJECTED
+
   @Index()
   @Column({ type: 'varchar', nullable: true })
-  correlation_id?: string; // idempotency key (optional unique if you want)
+  correlation_id?: string;
 }
