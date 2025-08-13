@@ -1,46 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { MarketDataRepository } from '../repository/marketdata.repository';
 import { MarketData } from '../entity/marketdata.entity';
-
 
 @Injectable()
 export class MarketDataService {
-  constructor(
-    @InjectRepository(MarketData) private readonly mdRepo: Repository<MarketData>,
-  ) {}
+  constructor(private readonly repository: MarketDataRepository) {}
 
-  async getLatestForInstrument(instrumentId: number) {
-    return this.mdRepo.findOne({
-      where: { instrumentId },
-      order: { datetime: 'DESC' },
-    });
+  async getLatestFor(instrumentId: number): Promise<MarketData | null> {
+    return await this.repository.getLatestFor(instrumentId);
   }
 
-  /**
-   * Efficiently fetch the latest row for many instruments at once.
-   * Uses DISTINCT ON (instrumentId) via raw SQL for performance.
-   */
-  async getLatestForInstruments(instrumentIds: number[]) {
-    if (!instrumentIds.length) return [];
-    const rows = await this.mdRepo.query(
-      `
-      SELECT DISTINCT ON ("instrumentId")
-             "instrumentId", high, low, open, close, "previousClose", datetime
-      FROM marketdata
-      WHERE "instrumentId" = ANY($1)
-      ORDER BY "instrumentId", datetime DESC
-      `,
-      [instrumentIds],
-    );
-    return rows;
-  }
-
-  async getRecentForInstrument(instrumentId: number, limit = 50) {
-    return this.mdRepo.find({
-      where: { instrumentId },
-      order: { datetime: 'DESC' },
-      take: limit,
-    });
+  async getRecentFor(instrumentId: number, limit = 50): Promise<MarketData[]> {
+    return await this.repository.getRecentFor(instrumentId, limit);
   }
 }
