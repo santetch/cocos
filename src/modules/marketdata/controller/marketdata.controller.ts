@@ -15,7 +15,7 @@ export class MarketDataController {
   @ApiOkResponse({ type: PriceDTO, description: 'Latest price for instrument' })
   async latest(@Param('instrumentId', ParseIntPipe) instrumentId: number): Promise<PriceDTO | null> {
     try {
-      const r = await this.service.getLatestForInstrument(instrumentId);
+      const r = await this.service.getLatestFor(instrumentId);
       return r && {
         instrumentId: r.instrumentId,
         datetime: r.datetime.toISOString(),
@@ -32,7 +32,7 @@ export class MarketDataController {
   @ApiOkResponse({ type: [PriceDTO], description: 'Recent candles for an instrument (DESC by datetime)' })
   async recent(@Query() q: QueryRecentDTO): Promise<PriceDTO[]> {
     try {
-      const rows = await this.service.getRecentForInstrument(q.instrumentId, q.limit);
+      const rows = await this.service.getRecentFor(q.instrumentId, q.limit);
       return rows.map(r => ({
         instrumentId: r.instrumentId,
         datetime: r.datetime.toISOString(),
